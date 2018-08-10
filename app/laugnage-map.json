@@ -1,0 +1,25 @@
+{
+  "inputfile": "app-language.xlsx",
+  "outputPath": "src/main/res/",
+  "language-map": {
+    "en英语-English": "",
+    "ar阿拉伯语-Arabic": "ar",
+    "cs捷克语-Czech": "cs",
+    "da丹麦语-Danish": "da",
+    "de德语-German": "de",
+    "es西班牙语-Spanish": "es",
+    "fi芬兰语-Finnish": "fi",
+    "fr法语-French": "fr",
+    "it意大利语-Italian": "it",
+    "he希伯来语-Hebrew": "iw",
+    "nl荷兰语-Dutch": "nl",
+    "no挪威语-Norwegian": "no",
+    "pl波兰语-Polish": "pl",
+    "pt葡萄牙语-Portuguese": "pt",
+    "ru俄语-Russian": "ru",
+    "sk斯洛伐克语-Slovak": "sk",
+    "se瑞典语-Swedish": "sv",
+    "tr土耳其语-Turkish": "tr",
+    "tw繁体中文": "tw"
+  }
+}
