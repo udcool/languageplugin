@@ -1,15 +1,17 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-language'
 
 buildscript {
     repositories {
         jcenter()
-        flatDir name: 'localRepository', dir: '../language/localRepository/libs'
+        flatDir name: 'localRepository', dir: './plugins'
     }
     dependencies {
         classpath 'com.hyjoy.gradle.plugin:language:1.0'//命名是我们的groupId：moduleName：version
     }
 }
+
+
+apply plugin: 'android-language'
 
 android {
     compileSdkVersion 28

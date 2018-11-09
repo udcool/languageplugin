@@ -34,12 +34,12 @@ class HJLLTask extends DefaultTask {
     @TaskAction
     void transiformLanguage() {
         def extension = extension()
-        println(extension.configFile)
+        Log.log(extension.configFile)
         def config = new HJLLExtensionConfig(extension.configFile)
         Map<String, Object> map = config.loadLanguageMap()
-        List<List<String>> rows = new ExcelDocument(config.loadFilePath()).loadRowDatas()
+        List<List<String>> rows = new ExcelDocument(config.loadFilePath(), config.loadLanguageMap().size()).loadRowDatas()
         String outputPath = config.loadOutputPath()
-        Map<String, List<Language>> sData = loadLanguages(rows)
+        Map<String, List<Language>> sData = loadLanguages(rows, config.fillEmpty())
         writeXML(outputPath, map, sData)
     }
 
@@ -52,9 +52,9 @@ class HJLLTask extends DefaultTask {
                 String key = (String) map.get(entry.getKey())
                 String path
                 if (key != null && !Objects.equals("", key)) {
-                    path = "values-" + key;
+                    path = "values-" + key
                 } else {
-                    path = "values";
+                    path = "values"
                 }
                 File file1 = new File(".", outputPath + path + "/strings.xml")
                 if (!file1.exists()) {
@@ -65,30 +65,33 @@ class HJLLTask extends DefaultTask {
                 }
                 randomAccessFile = new RandomAccessFile(file1, "rw")
                 long totalLength = randomAccessFile.length()
-                long step = 0l
-                String endStr
-                int index = -1
-                while (index < 0) {
-                    step += endTag.length() * 2
-                    println("step: " + step)
-                    if (totalLength - step <= 0) {
-                        break
+                if (totalLength > "<resources>".size()) {
+                    long step = 0l
+                    String endStr
+                    int index = -1
+                    while (index < 0) {
+                        step += endTag.length() * 2
+                        if (totalLength - step <= 0) {
+                            break
+                        }
+                        randomAccessFile.seek(totalLength - step)
+                        byte[] buff = new byte[(int) step]
+                        randomAccessFile.readFully(buff)
+                        endStr = new String(buff)
+                        index = endStr.indexOf(endTag)
                     }
-                    randomAccessFile.seek(totalLength - step)
-                    byte[] buff = new byte[(int) step]
-                    randomAccessFile.readFully(buff)
-                    endStr = new String(buff)
-                    index = endStr.indexOf(endTag)
-                }
-                if (randomAccessFile.length() - step + index > 0) {
-                    randomAccessFile.seek(randomAccessFile.length() - step + index)
+                    if (randomAccessFile.length() - step + index > 0) {
+                        randomAccessFile.seek(randomAccessFile.length() - step + index)
+                    }
+                } else {
+                    randomAccessFile.write("<resources>\n".getBytes(StandardCharsets.UTF_8))
                 }
 
                 StringBuilder sb = new StringBuilder()
                 for (Language language : entry.getValue()) {
                     if (Objects.isNull(language) || Objects.isNull(language.value) || Objects.isNull(language.code) || Objects.equals("", language.value.trim()))
                         continue
-                    sb.append("<string name=\"")
+                    sb.append("    <string name=\"")
                     sb.append(language.code)
                     sb.append("\">")
                     sb.append(language.value)
@@ -96,10 +99,8 @@ class HJLLTask extends DefaultTask {
                 }
                 randomAccessFile.write(sb.toString().getBytes(StandardCharsets.UTF_8))
                 randomAccessFile.write("</resources>".getBytes(StandardCharsets.UTF_8))
-
             } catch (Exception e) {
-                e.printStackTrace()
-                println(e.message)
+                throw new IllegalArgumentException(e)
             } finally {
                 if (randomAccessFile != null) {
                     randomAccessFile.close()
@@ -108,23 +109,33 @@ class HJLLTask extends DefaultTask {
         }
     }
 
-    private static Map<String, List<Language>> loadLanguages(List<List<String>> rows) {
-        Map<String, List<Language>> sData = new HashMap<>();
+    private
+    static Map<String, List<Language>> loadLanguages(List<List<String>> rows, boolean fillEmpty) {
+        Map<String, List<Language>> sData = new HashMap<>()
         // key， 以及 value
         if (rows.size() > 1) {
-            List<String> languages = rows.get(0);
+            List<String> languages = rows.get(0)
+
+            if (languages.size() == 0) {
+                throw IllegalArgumentException("语言头信息错误（第一行数据）")
+            }
 
             for (String language : languages) {
-                sData.put(language, new ArrayList<>());
+                Log.log(language)
+                sData.put(language, new ArrayList<>())
             }
             for (int i = 1; i < rows.size(); i++) {
-                List<String> data1 = rows.get(i);
-                String code = data1.get(0);
+                List<String> data1 = rows.get(i)
+                String code = data1.get(0)
                 for (int j = 1; j < data1.size(); j++) {
-                    Language language = new Language();
-                    language.code = code;
-                    language.value = data1.get(j);
-                    sData.get(languages.get(j)).add(language);
+                    Language language = new Language()
+                    language.code = code
+                    if (data1.get(j) == null || "" == data1.get(j).trim()) {
+                        if (!fillEmpty) continue
+                    }
+                    language.value = data1.get(j)
+
+                    sData.get(languages.get(j)).add(language)
                 }
             }
         }

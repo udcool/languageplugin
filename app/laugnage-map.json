@@ -1,6 +1,7 @@
 {
   "inputfile": "app-language.xlsx",
   "outputPath": "src/main/res/",
+  "fillEmpty": false,
   "language-map": {
     "en英语-English": "",
     "ar阿拉伯语-Arabic": "ar",

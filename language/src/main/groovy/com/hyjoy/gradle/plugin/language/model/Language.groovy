@@ -1,7 +1,7 @@
-package com.hyjoy.gradle.plugin.language.model;
+package com.hyjoy.gradle.plugin.language.model
 
-public class Language {
+class Language {
 
-    public String code;
-    public String value;
+    public String code
+    public String value
 }

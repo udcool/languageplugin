@@ -55,7 +55,7 @@ class TimeTrace implements TaskExecutionListener, BuildListener {
 
     @Override
     void buildFinished(BuildResult result) {
-        println "Task spend time:"
+        Log.log "Task spend time:"
         for (time in times) {
             if (time[0] > 50) {
                 printf "%7sms   %s\n", time
