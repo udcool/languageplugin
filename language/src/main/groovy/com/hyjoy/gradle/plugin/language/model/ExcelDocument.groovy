@@ -40,7 +40,8 @@ class ExcelDocument {
             for (int rowIndex = 0; rowIndex < sheet.getLastRowNum(); rowIndex++) {
                 XSSFRow row = sheet.getRow(rowIndex)
                 if (row == null) break
-                int columnNum = Math.min(row.getLastCellNum(), size)
+                Log.log("getLastCellNum=" + row.getLastCellNum() + " size=" + size)
+                int columnNum = Math.min(row.getLastCellNum(), size + 1)
                 List<String> rowData = new ArrayList<>()
                 for (int columnIndex = 0; columnIndex < columnNum; columnIndex++) {
                     Cell cell = row.getCell(columnIndex)
