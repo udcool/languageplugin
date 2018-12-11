@@ -33,7 +33,8 @@ class ExcelDocument {
 
             XSSFSheet sheet = workbook.getSheetAt(0)
 
-            int rowNum = sheet.getLastRowNum()
+            int rowNum = sheet.getLastRowNum() + 1
+            Log.log("行数为： " + rowNum + "  有数据的行数: " + sheet.getPhysicalNumberOfRows())
             if (rowNum < 2) {
                 throw new IllegalArgumentException("数据表Sheet 为空")
             }
