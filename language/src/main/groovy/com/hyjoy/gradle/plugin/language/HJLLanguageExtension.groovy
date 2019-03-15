@@ -8,8 +8,4 @@ class HJLLanguageExtension {
         this.configFile = path
         return this
     }
-
-
-
-
 }

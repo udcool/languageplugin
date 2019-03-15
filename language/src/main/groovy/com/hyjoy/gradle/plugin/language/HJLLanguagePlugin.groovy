@@ -13,8 +13,5 @@ class HJLLanguagePlugin implements Plugin<Project> {
         project.extensions.create("hjlanguage", HJLLanguageExtension)
 
         project.getTasks().create("a_hjlanguage", HJLLTask.class)
-
-        project.gradle.addListener(new TimeTrace())
-
     }
 }
