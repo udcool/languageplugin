@@ -78,7 +78,7 @@ public class HJLXML {
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
         randomAccessFile.seek(seek + "\n".length());
 
-        randomAccessFile.write(("\n\n" + data + "\n").getBytes());
+        randomAccessFile.write((data).getBytes());
         randomAccessFile.close();
         seekStepAndFixTAG(file);
     }
@@ -90,7 +90,6 @@ public class HJLXML {
         boolean headContent = false;
 
         Scanner scanner = new Scanner(file, "utf-8");
-        long seek = 0L;
         while (scanner.hasNext()) {
             String line = scanner.nextLine();
             if (line.trim().length() > 0 && Objects.equals(line.trim(), "\n")) {
@@ -101,8 +100,6 @@ public class HJLXML {
             }
             if (line.contains("</resources>")) {
                 hasFoot = true;
-            } else {
-                seek += line.length();
             }
         }
 
@@ -110,7 +107,6 @@ public class HJLXML {
         if (!hasHead) {
             randomAccessFile.seek(0L);
             randomAccessFile.write("<resources>\n".getBytes());
-            seek += "<resources>\n".length();
         }
 
         // 需要写入
@@ -118,6 +114,8 @@ public class HJLXML {
             randomAccessFile.seek(randomAccessFile.length());
             randomAccessFile.write("\n</resources>\n".getBytes());
         }
+
+        long seek = randomAccessFile.length() - ("\n</resources>\n").length();
 
         return seek;
     }
